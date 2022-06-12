@@ -1,7 +1,7 @@
 <template>
-    <div class="container"> 
+    <div :class="['container', {isInvalid}]"> 
         <input 
-        class="input" 
+        class="input"
         :type="type" 
         placeholder=" " 
         autocapitalize="off" 
@@ -26,6 +26,11 @@ export default {
         }, 
         modelValue: {
             type: String
+        }, 
+        isInvalid: {
+            type: Boolean, 
+            required: false, 
+            default: false
         }
     }, 
     methods: {
@@ -53,6 +58,11 @@ export default {
         box-shadow:0 0 2px 2px rgb(92, 148, 233);
     }
 
+    .container.isInvalid{
+        border:1px solid #f00;
+        box-shadow:0 0 2px 2px rgb(243, 183, 183);
+    }
+
     .input{
         position:absolute;
         left:0;
@@ -66,6 +76,10 @@ export default {
         font-size:2rem;
         color:#333;
         font-family:inherit;
+    }
+
+    .container.isInvalid > .input {
+        color:#f00;
     }
 
     .label{
