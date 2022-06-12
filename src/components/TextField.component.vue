@@ -1,6 +1,14 @@
 <template>
     <div class="container"> 
-        <input class="input" type="text" placeholder=" " autocapitalize="off" autocomplete="off"/>
+        <input 
+        class="input" 
+        :type="type" 
+        placeholder=" " 
+        autocapitalize="off" 
+        autocomplete="off"
+        :value="modelValue"
+        @input="onInput"
+        />
         <label class="label">{{ label }}</label>
     </div>
 </template>
@@ -11,6 +19,21 @@ export default {
         label: {
             type: String, 
             required: true
+        }, 
+        type: {
+            type: String, 
+            default: "text"
+        }, 
+        modelValue: {
+            type: String
+        }
+    }, 
+    methods: {
+        onInput(event){
+
+            this.$emit("update:modelValue", event.target.value);
+            this.$emit("input");
+
         }
     }
 }
@@ -22,6 +45,12 @@ export default {
         border:1px solid #ccc;
         border-radius:.5rem;
         position:relative;
+        background:#fff;
+    }
+
+    .container:focus-within{
+        border:1px solid rgb(52, 111, 199);
+        box-shadow:0 0 2px 2px rgb(92, 148, 233);
     }
 
     .input{
@@ -35,7 +64,8 @@ export default {
         outline:none;
         padding:0 3px;
         font-size:2rem;
-        color:#555;
+        color:#333;
+        font-family:inherit;
     }
 
     .label{
@@ -47,6 +77,8 @@ export default {
         pointer-events: none;
         text-transform:capitalize;
         transition:all .3s;
+        font-family:inherit;
+        color:#888;
     }
 
     .input:focus + .label, 
