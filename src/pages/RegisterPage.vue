@@ -59,8 +59,7 @@
                 />
             </app-form-group>
             <p class="already-msg">
-                <span>Already have an account?</span> 
-                Login Here
+                <span>Already have an account?</span> <a @click="goTo('/login')">Login Here</a>
             </p>
             <div class="mt-1">
                 <app-action-button v-if="!isFormProcessing" @click="submit" text="Create Account" center />
@@ -178,6 +177,9 @@ export default {
             }
 
             this.isFormProcessing = true;
+        }, 
+        goTo(location){
+            this.$router.push(location);
         }
     }
 }

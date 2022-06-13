@@ -34,7 +34,8 @@ body{
 }
 
 button, 
-select{
+select, 
+a{
     cursor:pointer;
 }
 
