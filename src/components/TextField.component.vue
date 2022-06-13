@@ -8,6 +8,7 @@
         autocomplete="off"
         :value="modelValue"
         @input="onInput"
+        :disabled="disabled"
         />
         <label class="label">{{ label }}</label>
     </div>
@@ -28,6 +29,11 @@ export default {
             type: String
         }, 
         isInvalid: {
+            type: Boolean, 
+            required: false, 
+            default: false
+        }, 
+        disabled: {
             type: Boolean, 
             required: false, 
             default: false

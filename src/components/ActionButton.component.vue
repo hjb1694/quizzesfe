@@ -31,6 +31,10 @@ export default {
         font-size:1.8rem;
     }
 
+    .action-button:active{
+        box-shadow: 0 0 3px 3px rgb(109, 230, 183);
+    }
+
     .center{
         margin:0 auto;
     }

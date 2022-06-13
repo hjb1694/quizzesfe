@@ -9,6 +9,7 @@
                 @input="validateUserName" 
                 label="username" 
                 type="text"
+                :disabled="isFormProcessing"
                 />
                 <app-field-error 
                 v-if="formFields.username.invalid"
@@ -22,6 +23,7 @@
                 @input="validateEmail"
                 label="email" 
                 type="email"
+                :disabled="isFormProcessing"
                 />
                 <app-field-error 
                 v-if="formFields.email.invalid"
@@ -29,17 +31,43 @@
                 />
             </app-form-group>
             <app-form-group>
-                <app-text-field v-model="formFields.password.value" label="password" type="password"/>
+                <app-text-field 
+                v-model="formFields.password.value" 
+                :is-invalid="formFields.password.invalid"
+                @input="validatePassword"
+                label="password" 
+                type="password"
+                :disabled="isFormProcessing"
+                />
+                <app-field-error 
+                v-if="formFields.password.invalid"
+                message="Password must be between 8 and 25 characters and contain at least one uppercase letter, one lowercase letter, and one number." 
+                />
             </app-form-group>
              <app-form-group>
-                <app-text-field v-model="formFields.confirmPassword.value" label="confirm password" type="password"/>
+                <app-text-field 
+                v-model="formFields.confirmPassword.value" 
+                :is-invalid="formFields.confirmPassword.invalid"
+                @input="validateConfirmPassword"
+                label="confirm password" 
+                type="password"
+                :disabled="isFormProcessing"
+                />
+                <app-field-error 
+                v-if="formFields.confirmPassword.invalid"
+                message="Confirm password does not match." 
+                />
             </app-form-group>
             <p class="already-msg">
                 <span>Already have an account?</span> 
                 Login Here
             </p>
             <div class="mt-1">
-            <app-action-button text="Create Account" center/>
+                <app-action-button v-if="!isFormProcessing" @click="submit" text="Create Account" center />
+                <div v-else class="processing">
+                    <img class="spinner" src="@/assets/double-ring-spinner.gif" alt="Processing..." />
+                    <span class="processing__text">Processing</span>
+                </div>
             </div>
         </form>
     </div>
@@ -50,6 +78,7 @@ import FormGroup from "@/components/FormGroup.component.vue";
 import TextField from "@/components/TextField.component.vue";
 import FieldError from "@/components/FieldError.component.vue";
 import isEmail from "is-email";
+import stringLength from "string-length";
 
 export default {
     name: "RegisterPage", 
@@ -77,7 +106,8 @@ export default {
                     value: "", 
                     invalid: false
                 },
-            }
+            }, 
+            isFormProcessing: false
         }
     }, 
     methods: {
@@ -89,16 +119,65 @@ export default {
 
             if(!userNameRegs.alpha.test(this.formFields.username.value) || !userNameRegs.alphaNumeric.test(this.formFields.username.value)){
                 this.formFields.username.invalid = true;
+                return false;
             }else{
                 this.formFields.username.invalid = false;
+                return true;
             }
         }, 
         validateEmail(){
             if(!isEmail(this.formFields.email.value)){
                 this.formFields.email.invalid = true;
+                return false;
             }else{
                 this.formFields.email.invalid = false;
+                return true;
             }
+        }, 
+        validatePassword(){
+            const passwordRegs = {
+                uppercase: /[A-Z]/, 
+                lowercase: /[a-z]/, 
+                numeric: /[0-9]/
+            }
+
+            if(
+                !passwordRegs.uppercase.test(this.formFields.password.value) ||
+                !passwordRegs.lowercase.test(this.formFields.password.value) ||
+                !passwordRegs.numeric.test(this.formFields.password.value) ||
+                stringLength(this.formFields.password.value) < 8 ||
+                stringLength(this.formFields.password.value) > 25
+            ){
+                this.formFields.password.invalid = true;
+                return false;
+            }else{
+                this.formFields.password.invalid = false;
+                return true;
+            }
+        }, 
+        validateConfirmPassword(){
+            if(this.formFields.confirmPassword.value !== this.formFields.password.value){
+                this.formFields.confirmPassword.invalid = true;
+                return false;
+            }else{
+                this.formFields.confirmPassword.invalid = false;
+                return true;
+            }
+        }, 
+        submit(){
+            if(
+                [
+                this.validateUserName(), 
+                this.validateEmail(), 
+                this.validatePassword(), 
+                this.validateConfirmPassword()
+                ].includes(false)
+            ){
+                console.log("Validation failed!");
+                return;
+            }
+
+            this.isFormProcessing = true;
         }
     }
 }
@@ -126,5 +205,23 @@ export default {
         color:#fff;
         text-align:center;
         font-size:1.4rem;
+    }
+
+    .spinner{
+        width:4rem;
+        display:block;
+    }
+
+    .processing{
+        display:flex;
+        align-items:center;
+        justify-content: center;
+        width:20rem;
+        margin:1rem auto;
+
+        &__text{
+            color:#fff;
+            font-size:2rem;
+        }
     }
 </style>
